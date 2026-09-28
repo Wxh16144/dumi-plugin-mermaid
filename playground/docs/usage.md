@@ -52,7 +52,7 @@ export default {
 <i>Source Code: [src/component/index.tsx](https://github.com/Wxh16144/dumi-plugin-mermaid/blob/master/src/component/index.tsx)</i>
 
 ```js | pure
-// .dumi/theme/builtins/Mermaid.tsx
+// .dumi/theme/builtins/DumiPluginMermaid.tsx
 export default (props) => {
   return <div>{props.code}</div>;
 };

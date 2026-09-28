@@ -1,7 +1,7 @@
 import type { IApi } from 'dumi';
 import path from 'path';
 import type { RehypePluginOptions } from './core';
-import { rehypePlugin, remarkPlugin } from './core';
+import { MERMAID_COMPONENT_NAME, rehypePlugin, remarkPlugin } from './core';
 
 const COMPONENT_PATH = path.join(__dirname, '../es/component/index.js');
 
@@ -39,8 +39,8 @@ export default (api: IApi, options: IPluginOptions = {}) => {
     fn: (memo: IApi['config']) => {
       memo.builtins = Object.assign(
         {
-          Mermaid: {
-            specifier: 'Mermaid',
+          [MERMAID_COMPONENT_NAME]: {
+            specifier: MERMAID_COMPONENT_NAME,
             source: COMPONENT_PATH,
           },
         },

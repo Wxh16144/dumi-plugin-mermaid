@@ -4,10 +4,10 @@
 
 - `mermaid` code blocks are rendered as diagrams
 - Follows the site color scheme automatically
-- Registers the builtin `Mermaid` component, which can be overridden by theme
+- Registers the builtin `DumiPluginMermaid` component, which can be overridden by theme
 
-| Option          | Type     | Default     | Description                                              |
-| --------------- | -------- | ----------- | -------------------------------------------------------- |
+| Option          | Type     | Default     | Description                                               |
+| --------------- | -------- | ----------- | --------------------------------------------------------- |
 | `mermaidConfig` | `object` | `undefined` | Passed to `mermaid.initialize`, must be JSON serializable |
 
 ## Usage
@@ -60,7 +60,7 @@ export default {
 ### Customization
 
 ```tsx
-// .dumi/theme/builtins/Mermaid.tsx
+// .dumi/theme/builtins/DumiPluginMermaid.tsx
 export default (props) => {
   return <div>{props.code}</div>;
 };
@@ -84,10 +84,10 @@ Read more: https://wxh16144.github.io/dumi-plugin-mermaid/
 
 - `mermaid` 代码块会被渲染成图表
 - 自动跟随站点明暗配色
-- 注册内置 `Mermaid` 组件，可通过主题覆盖
+- 注册内置 `DumiPluginMermaid` 组件，可通过主题覆盖
 
-| 配置项          | 类型     | 默认值      | 说明                                            |
-| --------------- | -------- | ----------- | ----------------------------------------------- |
+| 配置项          | 类型     | 默认值      | 说明                                             |
+| --------------- | -------- | ----------- | ------------------------------------------------ |
 | `mermaidConfig` | `object` | `undefined` | 传给 `mermaid.initialize`，必须是可序列化的 JSON |
 
 ## 使用
@@ -140,7 +140,7 @@ export default {
 ### 自定义
 
 ```tsx
-// .dumi/theme/builtins/Mermaid.tsx
+// .dumi/theme/builtins/DumiPluginMermaid.tsx
 export default (props) => {
   return <div>{props.code}</div>;
 };

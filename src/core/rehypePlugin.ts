@@ -1,8 +1,8 @@
 import { unistUtilVisit } from 'dumi';
 import { hasMermaidMarker } from './remarkPlugin';
 
-/** component name registered into dumi builtins */
-export const MERMAID_COMPONENT_NAME = 'Mermaid';
+/** component name registered into dumi builtins, prefixed to avoid clashing with user theme */
+export const MERMAID_COMPONENT_NAME = 'DumiPluginMermaid';
 
 export interface RehypePluginOptions {
   /** passed to `mermaid.initialize`, must be JSON serializable */
