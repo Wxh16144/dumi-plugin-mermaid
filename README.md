@@ -67,12 +67,19 @@ export default (props) => {
 };
 ```
 
-`dumi-plugin-mermaid/component` also exports `MermaidToggle`, which renders the diagram with a switch at the top right.
-Re-export it to make every diagram switchable:
+`dumi-plugin-mermaid/component` exports two components, both taking `code` and `mermaidConfig`:
+
+| Export          | Description                                                      |
+| --------------- | ---------------------------------------------------------------- |
+| `default`       | Diagram with a switch at the top right (same as `MermaidToggle`) |
+| `Mermaid`       | Diagram only, source is shown before the diagram is ready        |
+| `MermaidToggle` | Same as the default export                                       |
+
+To render diagrams only, without the switch:
 
 ```tsx
 // .dumi/theme/builtins/DumiPluginMermaid.tsx
-export { MermaidToggle as default } from 'dumi-plugin-mermaid/component';
+export { Mermaid as default } from 'dumi-plugin-mermaid/component';
 ```
 
 It takes the same props as the default export (`code` and `mermaidConfig`); anything else is up to your own
@@ -159,22 +166,29 @@ export default (props) => {
 };
 ```
 
-`dumi-plugin-mermaid/component` 另外导出了 `MermaidToggle`，它在右上角带一个切换按钮。把它 reexport 出去，就能让所有
-图表都可切换：
+`dumi-plugin-mermaid/component` 导出了两个组件，都接受 `code` 与 `mermaidConfig`：
+
+| 导出            | 说明                                             |
+| --------------- | ------------------------------------------------ |
+| `default`       | 右上角带切换按钮的图表（等同于 `MermaidToggle`） |
+| `Mermaid`       | 只渲染图表，图表就绪前显示源码                   |
+| `MermaidToggle` | 等同于默认导出                                   |
+
+只想渲染图表、不要切换按钮时：
 
 ```tsx
 // .dumi/theme/builtins/DumiPluginMermaid.tsx
-export { MermaidToggle as default } from 'dumi-plugin-mermaid/component';
+export { Mermaid as default } from 'dumi-plugin-mermaid/component';
 ```
 
 它的配置项与默认导出一致（`code`、`mermaidConfig`），其余需求可以自行覆盖实现。
 
-## Caveats
+## 限制
 
-Only runtime rendering is supported, so the following `rehype-mermaid` options are not available: `strategy`
-(`img-png` / `img-svg` / `inline-svg`), `dark`, `colorScheme`, `errorFallback`, `screenshot`, `browser` and
-`launchOptions`. Diagrams inside `::: code-group` are rendered in place, which may not match the tabbed layout.
+仅支持运行时渲染，因此 `rehype-mermaid` 的以下选项不可用：`strategy`（`img-png` / `img-svg` / `inline-svg`）、
+`dark`、`colorScheme`、`errorFallback`、`screenshot`、`browser`、`launchOptions`。写在 `::: code-group` 里的图表
+会就地渲染，可能与 tab 布局不符。
 
-### Full Document
+### 完整文档
 
-Read more: https://wxh16144.github.io/dumi-plugin-mermaid/
+详见：https://wxh16144.github.io/dumi-plugin-mermaid/
