@@ -7,6 +7,17 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Every run pushes a release commit to the branch, so two runs must never overlap.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write # Required for OIDC (npm provenance attestations)
+  contents: write # Required for semantic-release to push tags and commits
+  issues: write # Required for semantic-release to create issues
+  pull-requests: write # Required for semantic-release to comment on PRs
+
 jobs:
   test:
     name: Test
@@ -35,6 +46,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # semantic-release reads the full history and existing tags to pick the next version
+          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
