@@ -33,7 +33,7 @@ graph TD;
 
 插件选项会作为 `mermaid.initialize` 的参数，**必须是可序列化的 JSON**。
 
-```js {4} | pure
+```js {6-8} | pure
 // .dumirc.ts
 export default {
   plugins: [

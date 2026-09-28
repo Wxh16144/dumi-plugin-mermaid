@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import remarkPlugin, { MERMAID_LANG, MERMAID_MARKER_ATTR } from '../src/core/remarkPlugin';
+import remarkPlugin, {
+  MERMAID_LANG,
+  MERMAID_MARKER_ATTR,
+  MERMAID_MARKER_PROP,
+  hasMermaidMarker,
+} from '../src/core/remarkPlugin';
 
 const run = (children: any[]) => {
   const tree = { type: 'root', children };
@@ -33,5 +38,20 @@ describe('remarkPlugin', () => {
     const tree = run([code]);
 
     expect(tree.children[0]).toBe(code);
+  });
+});
+
+describe('hasMermaidMarker', () => {
+  it('should match both the raw and the normalized attribute name', () => {
+    expect(MERMAID_MARKER_PROP).toBe('dataDumiMermaid');
+    expect(hasMermaidMarker({ [MERMAID_MARKER_ATTR]: '' })).toBe(true);
+    expect(hasMermaidMarker({ [MERMAID_MARKER_PROP]: '' })).toBe(true);
+  });
+
+  it('should not match other nodes', () => {
+    expect(hasMermaidMarker({ className: ['language-mermaid'] })).toBe(false);
+    expect(hasMermaidMarker({})).toBe(false);
+    expect(hasMermaidMarker(null)).toBe(false);
+    expect(hasMermaidMarker(undefined)).toBe(false);
   });
 });

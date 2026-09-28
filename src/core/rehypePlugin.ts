@@ -1,5 +1,5 @@
 import { unistUtilVisit } from 'dumi';
-import { MERMAID_MARKER_ATTR } from './remarkPlugin';
+import { hasMermaidMarker } from './remarkPlugin';
 
 /** component name registered into dumi builtins */
 export const MERMAID_COMPONENT_NAME = 'Mermaid';
@@ -20,7 +20,7 @@ function rehypePlugin(options: RehypePluginOptions = {}) {
 
   return (tree: any) => {
     unistUtilVisit.visit(tree, 'element', (node: any, index: number | null, parent: any) => {
-      if (!Object.prototype.hasOwnProperty.call(node.properties ?? {}, MERMAID_MARKER_ATTR)) return;
+      if (!hasMermaidMarker(node.properties)) return;
 
       const JSXAttributes = [
         {

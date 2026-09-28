@@ -1,10 +1,22 @@
 import { unistUtilVisit } from 'dumi';
 
-/** marker attribute used to hand the diagram source over to the rehype phase */
-export const MERMAID_MARKER_ATTR = 'data-dumi-plugin-mermaid';
+/** marker attribute written into the generated HTML */
+export const MERMAID_MARKER_ATTR = 'data-dumi-mermaid';
+
+/** hast stores `data-*` attributes in camelCase */
+export const MERMAID_MARKER_PROP = MERMAID_MARKER_ATTR.replace(/-([a-z])/g, (_, char) =>
+  char.toUpperCase(),
+);
 
 /** code fence language which should be treated as a mermaid diagram */
 export const MERMAID_LANG = 'mermaid';
+
+/** check whether a hast node is the mermaid placeholder */
+export const hasMermaidMarker = (properties?: Record<string, unknown> | null): boolean => {
+  if (!properties) return false;
+
+  return MERMAID_MARKER_ATTR in properties || MERMAID_MARKER_PROP in properties;
+};
 
 // only escape the characters that would break the surrounding HTML text node
 const escapeHtml = (raw: string) =>

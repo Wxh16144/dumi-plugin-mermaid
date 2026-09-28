@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import rehypePlugin, { MERMAID_COMPONENT_NAME } from '../src/core/rehypePlugin';
-import { MERMAID_MARKER_ATTR } from '../src/core/remarkPlugin';
+import { MERMAID_MARKER_ATTR, MERMAID_MARKER_PROP } from '../src/core/remarkPlugin';
 
-const markerPre = (code: string) => ({
+const markerPre = (code: string, prop = MERMAID_MARKER_PROP) => ({
   type: 'element',
   tagName: 'pre',
-  properties: { [MERMAID_MARKER_ATTR]: '' },
+  properties: { [prop]: '' },
   children: [{ type: 'text', value: code }],
 });
 
@@ -36,6 +36,12 @@ describe('rehypePlugin', () => {
         },
       ],
     });
+  });
+
+  it('should also match the raw attribute name', () => {
+    const tree = run([markerPre('graph TD;', MERMAID_MARKER_ATTR)]);
+
+    expect(tree.children[0].tagName).toBe(MERMAID_COMPONENT_NAME);
   });
 
   it('should forward mermaidConfig as a JSX attribute', () => {
