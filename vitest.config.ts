@@ -7,6 +7,8 @@ export default defineConfig({
     alias: {
       [name]: resolve(__dirname, './src'),
       [`${name}/(.*)`]: resolve(__dirname, './src/$1'),
+      // only exists in dumi's build, point it to a lightweight stand-in for tests
+      'dumi/theme/builtins/SourceCode': resolve(__dirname, './tests/mocks/source-code.tsx'),
     },
     coverage: {
       reporter: ['text', 'text-summary', 'json', 'lcov'],

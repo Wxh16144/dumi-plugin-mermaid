@@ -2,6 +2,7 @@
 
 exports[`export > should work 1`] = `
 [
+  "MermaidToggle",
   "default",
 ]
 `;

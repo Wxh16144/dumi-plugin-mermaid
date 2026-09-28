@@ -1,0 +1,54 @@
+// 外层用 :where() 归零特异性，主题里一条普通类名规则即可整体覆盖；
+// 内层保留正常特异性，避免被站内全局 button/pre 样式带跑
+:where(.dumi-plugin-mermaid-toggle) {
+  // 灰色半透明，明暗主题下都能贴合
+  --line: rgba(128, 128, 128, 0.25);
+  --bg: rgba(128, 128, 128, 0.06);
+  --active-bg: rgba(128, 128, 128, 0.18);
+
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+
+  .dumi-plugin-mermaid-toggle-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--line);
+    background-color: var(--bg);
+  }
+
+  .dumi-plugin-mermaid-toggle-tabs {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 6px;
+    background-color: var(--bg);
+  }
+
+  .dumi-plugin-mermaid-toggle-tab {
+    padding: 2px 10px;
+    border: 0;
+    border-radius: 4px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 12px;
+    line-height: 20px;
+    cursor: pointer;
+    opacity: 0.65;
+
+    &[aria-pressed='true'] {
+      background-color: var(--active-bg);
+      opacity: 1;
+    }
+  }
+
+  .dumi-plugin-mermaid,
+  .dumi-default-source-code {
+    padding: 16px;
+  }
+}
