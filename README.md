@@ -10,6 +10,9 @@
 
 ```bash
 npm install dumi-plugin-mermaid --save-dev
+# yarn add dumi-plugin-mermaid --dev
+# pnpm add dumi-plugin-mermaid --save-dev
+# bun add dumi-plugin-mermaid --dev
 ```
 
 ### Apply

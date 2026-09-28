@@ -4,9 +4,29 @@ title: Usage
 
 ## 安装
 
-```bash
+> 前置条件：dumi@2.0.0+
+
+:::code-group
+
+```bash [npm]
 npm install dumi-plugin-mermaid --save-dev
 ```
+
+```bash [yarn]
+yarn add dumi-plugin-mermaid --dev
+```
+
+```bash [pnpm]
+pnpm add dumi-plugin-mermaid --save-dev
+```
+
+```bash [bun]
+bun add dumi-plugin-mermaid --dev
+```
+
+:::
+
+<br />
 
 ## 使用
 
