@@ -2,13 +2,13 @@
 title: Usage
 ---
 
-# 安装
+## 安装
 
 ```bash
 npm install dumi-plugin-mermaid --save-dev
 ```
 
-# 使用
+## 使用
 
 ```js {3} | pure
 // .dumirc.ts
@@ -29,7 +29,7 @@ graph TD;
 ```
 </pre>
 
-# 配置
+## 配置
 
 插件选项会作为 `mermaid.initialize` 的参数，**必须是可序列化的 JSON**。
 
@@ -47,7 +47,7 @@ export default {
 };
 ```
 
-## 自定义
+### 自定义
 
 <i>Source Code: [src/component](https://github.com/Wxh16144/dumi-plugin-mermaid/tree/master/src/component)</i>
 
@@ -60,7 +60,7 @@ export default (props) => {
 };
 ```
 
-### 切换源码与图表
+#### 切换源码与图表
 
 `dumi-plugin-mermaid/component` 导出了两个组件，都接受 `code` 与 `mermaidConfig`：
 
@@ -73,6 +73,12 @@ export default (props) => {
 默认导出的组件会渲染图表，点击右上角按钮即可查看源码。想只渲染图表、不带切换按钮时：
 
 ```js | pure
-// .dumirc.ts
+// .dumi/theme/builtins/DumiPluginMermaid.tsx
 export { Mermaid as default } from 'dumi-plugin-mermaid/component';
 ```
+
+## 限制
+
+仅支持运行时渲染，因此 `rehype-mermaid` 的以下选项不可用：`strategy`（`img-png` / `img-svg` / `inline-svg`）、
+`dark`、`colorScheme`、`errorFallback`、`screenshot`、`browser`、`launchOptions`。写在 `::: code-group` 里的图表
+会就地渲染，可能与 tab 布局不符。
