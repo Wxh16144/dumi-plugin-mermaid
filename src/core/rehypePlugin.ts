@@ -1,0 +1,51 @@
+import { unistUtilVisit } from 'dumi';
+import { MERMAID_MARKER_ATTR } from './remarkPlugin';
+
+/** component name registered into dumi builtins */
+export const MERMAID_COMPONENT_NAME = 'Mermaid';
+
+export interface RehypePluginOptions {
+  /** passed to `mermaid.initialize`, must be JSON serializable */
+  mermaidConfig?: Record<string, unknown>;
+}
+
+/** collect the text of a hast node */
+const toText = (node: any): string => {
+  if (node.type === 'text') return node.value ?? '';
+  return (node.children ?? []).map(toText).join('');
+};
+
+function rehypePlugin(options: RehypePluginOptions = {}) {
+  const { mermaidConfig } = options;
+
+  return (tree: any) => {
+    unistUtilVisit.visit(tree, 'element', (node: any, index: number | null, parent: any) => {
+      if (!Object.prototype.hasOwnProperty.call(node.properties ?? {}, MERMAID_MARKER_ATTR)) return;
+
+      const JSXAttributes = [
+        {
+          type: 'JSXAttribute',
+          name: 'code',
+          value: JSON.stringify(toText(node)),
+        },
+      ];
+
+      if (mermaidConfig) {
+        JSXAttributes.push({
+          type: 'JSXAttribute',
+          name: 'mermaidConfig',
+          value: JSON.stringify(mermaidConfig),
+        });
+      }
+
+      parent!.children.splice(index!, 1, {
+        type: 'element',
+        tagName: MERMAID_COMPONENT_NAME,
+        JSXAttributes,
+        children: [],
+      });
+    });
+  };
+}
+
+export default rehypePlugin;

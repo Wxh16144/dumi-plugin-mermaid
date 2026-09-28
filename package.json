@@ -1,0 +1,108 @@
+{
+  "name": "dumi-plugin-mermaid",
+  "version": "0.0.0-alpha.0",
+  "description": "Dumi Plugin - Render mermaid diagrams from code blocks",
+  "keywords": [
+    "dumi",
+    "dumi-plugin",
+    "mermaid"
+  ],
+  "homepage": "https://github.com/Wxh16144/dumi-plugin-mermaid#readme",
+  "bugs": {
+    "url": "https://github.com/Wxh16144/dumi-plugin-mermaid/issues/new"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wxh16144/dumi-plugin-mermaid.git"
+  },
+  "author": "Wxh16144<wxh16144@qq.com>",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./es/index.d.ts",
+      "import": "./es/index.js",
+      "require": "./lib/index.js"
+    },
+    "./component": {
+      "types": "./es/component/index.d.ts",
+      "import": "./es/component/index.js",
+      "require": "./lib/component/index.js"
+    }
+  },
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "files": [
+    "lib",
+    "es"
+  ],
+  "scripts": {
+    "build": "father build",
+    "build:watch": "father dev",
+    "ci": "pnpm run lint && pnpm run type-check && pnpm run doctor && pnpm run build",
+    "dev": "pnpm run --filter playground dev",
+    "docs:build": "pnpm run --filter playground build",
+    "doctor": "father doctor",
+    "lint": "eslint \"{src,tests}/**/*.{js,jsx,ts,tsx}\"",
+    "prepare": "husky install && pnpm run build",
+    "prepublishOnly": "pnpm run doctor && pnpm run build",
+    "prettier": "prettier -c --write \"**/**\"",
+    "release": "semantic-release",
+    "test": "vitest --passWithNoTests",
+    "test:coverage": "vitest run --coverage --passWithNoTests",
+    "test:unit:update": "vitest -u",
+    "type-check": "tsc -p tsconfig-check.json"
+  },
+  "lint-staged": {
+    "*.{md,json}": [
+      "prettier --write --no-error-on-unmatched-pattern"
+    ],
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "mermaid": "^11"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17",
+    "@commitlint/config-conventional": "^17",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@umijs/lint": "^4",
+    "@vitest/coverage-v8": "latest",
+    "commitlint": "^17",
+    "dumi": "^2",
+    "eslint": "^8",
+    "father": "^4",
+    "husky": "^8",
+    "lint-staged": "^13",
+    "prettier": "^2",
+    "prettier-plugin-organize-imports": "^3",
+    "prettier-plugin-packagejson": "^2",
+    "react": "^18",
+    "react-dom": "^18",
+    "semantic-release": "^21",
+    "stylelint": "^15",
+    "typescript": "^5",
+    "vitest": "latest"
+  },
+  "optionalDependencies": {
+    "dumi": "^2",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "packageManager": "pnpm@8.15.8",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

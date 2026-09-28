@@ -1,0 +1,15 @@
+**/*.svg
+.umi
+.umi-production
+/dist
+.DS_Store
+.eslintignore
+*.png
+*.toml
+.editorconfig
+.gitignore
+.prettierignore
+LICENSE
+.eslintcache
+*.lock
+_*.md
