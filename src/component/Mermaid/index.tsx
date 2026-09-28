@@ -6,15 +6,25 @@ import './index.less';
 function Mermaid(props: MermaidProps) {
   const { code, mermaidConfig, onRender } = props;
   const { svg, error } = useMermaid(code, mermaidConfig);
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const onRenderRef = React.useRef(onRender);
+  onRenderRef.current = onRender;
 
   React.useEffect(() => {
-    if (svg) {
-      onRender?.(svg);
+    const svgElement = rootRef.current?.querySelector('svg');
+    if (svgElement) {
+      onRenderRef.current?.(new XMLSerializer().serializeToString(svgElement));
     }
-  }, [onRender, svg]);
+  }, [svg]);
 
   if (svg) {
-    return <div className="dumi-plugin-mermaid" dangerouslySetInnerHTML={{ __html: svg }} />;
+    return (
+      <div
+        ref={rootRef}
+        className="dumi-plugin-mermaid"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+    );
   }
 
   // 首屏渲染源码，避免 hydration 不一致

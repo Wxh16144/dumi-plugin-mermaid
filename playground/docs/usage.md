@@ -71,10 +71,10 @@ export default {
 
 <i>Source Code: [src/component](https://github.com/Wxh16144/dumi-plugin-mermaid/tree/master/src/component)</i>
 
-在 `.dumi/theme/builtins/DumiPluginMermaid.tsx` 里给出一份自己的实现，即可接管渲染：
+在 `.dumi/theme/builtins/DumiPluginMermaid/index.tsx` 里给出一份自己的实现，即可接管渲染：
 
 ```js | pure
-// .dumi/theme/builtins/DumiPluginMermaid.tsx
+// .dumi/theme/builtins/DumiPluginMermaid/index.tsx
 export default (props) => {
   return <div>{props.code}</div>;
 };
@@ -92,7 +92,7 @@ export default (props) => {
 | `MermaidToggle` | 等同于默认导出                                              |
 | `useMermaid`    | 渲染 Mermaid 源码并返回 `{ svg, error }`，用于组合自定义 UI |
 
-`Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig` 和可选的 `onRender(svg)`。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
+`Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig` 和可选的 `onRender(svg)`。其中 `svg` 是经过 XML 序列化、可独立使用的 SVG 字符串。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
 
 ```tsx | pure
 import { MermaidToggle } from 'dumi-plugin-mermaid/component';
@@ -110,7 +110,7 @@ export default () => (
 默认导出的组件会渲染图表，点击右上角按钮即可查看源码。想只渲染图表、不带切换按钮时：
 
 ```js | pure
-// .dumi/theme/builtins/DumiPluginMermaid.tsx
+// .dumi/theme/builtins/DumiPluginMermaid/index.tsx
 export { Mermaid as default } from 'dumi-plugin-mermaid/component';
 ```
 
