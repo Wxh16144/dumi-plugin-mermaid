@@ -4,8 +4,14 @@ import useMermaid from '../useMermaid';
 import './index.less';
 
 function Mermaid(props: MermaidProps) {
-  const { code, mermaidConfig } = props;
+  const { code, mermaidConfig, onRender } = props;
   const { svg, error } = useMermaid(code, mermaidConfig);
+
+  React.useEffect(() => {
+    if (svg) {
+      onRender?.(svg);
+    }
+  }, [onRender, svg]);
 
   if (svg) {
     return <div className="dumi-plugin-mermaid" dangerouslySetInnerHTML={{ __html: svg }} />;

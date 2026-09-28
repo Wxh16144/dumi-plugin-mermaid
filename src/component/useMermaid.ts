@@ -1,12 +1,15 @@
 import * as React from 'react';
-import type { MermaidProps } from './types';
+import type { MermaidProps, MermaidResult } from './types';
 import useColorScheme from './useColorScheme';
 
 /** 渲染 mermaid 图表，返回 svg 或错误信息 */
-export default function useMermaid(code: string, mermaidConfig?: MermaidProps['mermaidConfig']) {
+export default function useMermaid(
+  code: string,
+  mermaidConfig?: MermaidProps['mermaidConfig'],
+): MermaidResult {
   const scheme = useColorScheme();
   const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
-  const [result, setResult] = React.useState<{ svg?: string; error?: string }>({});
+  const [result, setResult] = React.useState<MermaidResult>({});
 
   // mermaidConfig 可能是内联对象，按值比较避免 effect 反复执行
   const configKey = JSON.stringify(mermaidConfig ?? null);

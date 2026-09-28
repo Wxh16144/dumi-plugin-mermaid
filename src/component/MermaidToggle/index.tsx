@@ -12,7 +12,7 @@ const VIEWS: { value: MermaidView; label: string }[] = [
 ];
 
 function MermaidToggle(props: MermaidProps) {
-  const { code, mermaidConfig } = props;
+  const { code } = props;
   const [view, setView] = React.useState<MermaidView>('preview');
 
   return (
@@ -32,11 +32,7 @@ function MermaidToggle(props: MermaidProps) {
           ))}
         </div>
       </div>
-      {view === 'preview' ? (
-        <Mermaid code={code} mermaidConfig={mermaidConfig} />
-      ) : (
-        <MermaidSource code={code} />
-      )}
+      {view === 'preview' ? <Mermaid {...props} /> : <MermaidSource code={code} />}
     </div>
   );
 }

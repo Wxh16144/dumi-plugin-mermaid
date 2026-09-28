@@ -3,7 +3,9 @@
 exports[`export > should work 1`] = `
 [
   "Mermaid",
+  "MermaidSource",
   "MermaidToggle",
+  "useMermaid",
   "default",
 ]
 `;
