@@ -2,7 +2,7 @@ import * as React from 'react';
 
 type ColorScheme = 'light' | 'dark';
 
-// dumi 会把当前配色写到 <html> 上，`auto` 模式不写，此时回退到系统偏好
+// dumi 把配色写在 <html> 上；`auto` 模式不写该属性，回退到系统偏好
 const PREFERS_COLOR_ATTR = 'data-prefers-color';
 
 const readColorScheme = (): ColorScheme => {

@@ -1,7 +1,4 @@
-/**
- * 真实 `dumi/theme/builtins/SourceCode` 依赖 svgr / dumi 运行时上下文，单测环境里跑不起来，
- * 这里只保留渲染源码所需的最小结构。
- */
+/** 单测桩：真实组件依赖 svgr / dumi 运行时上下文，跑不起来，这里只保留最小结构 */
 export default function SourceCode(props: {
   children?: string;
   lang?: string;

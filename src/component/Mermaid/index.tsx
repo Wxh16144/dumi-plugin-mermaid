@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { MermaidProps } from '../types';
 import useMermaid from '../useMermaid';
+import './index.less';
 
 function Mermaid(props: MermaidProps) {
   const { code, mermaidConfig } = props;
@@ -10,7 +11,7 @@ function Mermaid(props: MermaidProps) {
     return <div className="dumi-plugin-mermaid" dangerouslySetInnerHTML={{ __html: svg }} />;
   }
 
-  // 服务端与首屏渲染源码，避免 hydration 不一致
+  // 首屏渲染源码，避免 hydration 不一致
   return (
     <div className="dumi-plugin-mermaid" data-error={error || undefined}>
       <pre>

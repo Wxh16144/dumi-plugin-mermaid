@@ -27,9 +27,7 @@ function remarkPlugin() {
     unistUtilVisit.visit(tree, 'code', (node: any, index: number | null, parent: any) => {
       if (node.lang !== MERMAID_LANG) return;
 
-      // dumi converts `<pre><code class="language-*">` into its own `<SourceCode>` component before
-      // extra rehype plugins run, so the mermaid source is passed through a plain `<pre>` node
-      // instead: its only child is a text node, which `rehypeEnhancedTag` ignores.
+      // dumi 会在 extra rehype 插件之前把 `<pre><code>` 转成 `<SourceCode>`，这里改用纯 `<pre>` 承载源码
       parent!.children.splice(index!, 1, {
         type: 'html',
         value: `<pre ${MERMAID_MARKER_ATTR}>${escapeHtml(node.value)}</pre>`,
