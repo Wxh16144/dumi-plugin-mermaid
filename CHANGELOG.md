@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.0.0...v1.1.0) (2026-09-28)
+
+### Features
+
+- add MermaidSource component and onRender callback; update documentation ([80f9b13](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/80f9b135f943fab53ff9ab30f14c2d6f41222e3b))
+- update Mermaid component to serialize SVG on render; improve documentation ([cd3921e](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/cd3921e71ab02fc523e0fac03ddd30e1bdb55cee))
+
 # 1.0.0 (2026-09-28)
 
 ### Bug Fixes
