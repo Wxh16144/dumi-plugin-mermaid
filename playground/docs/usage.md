@@ -84,13 +84,13 @@ export default (props) => {
 
 `dumi-plugin-mermaid/component` 导出以下组件和 Hook：
 
-| 导出            | 说明                                                        |
-| --------------- | ----------------------------------------------------------- |
-| `default`       | 右上角带切换按钮的图表（等同于 `MermaidToggle`）            |
-| `Mermaid`       | 只渲染图表，图表就绪前显示源码                              |
-| `MermaidSource` | 只渲染 Mermaid 源码                                         |
-| `MermaidToggle` | 等同于默认导出                                              |
-| `useMermaid`    | 渲染 Mermaid 源码并返回 `{ svg, error }`，用于组合自定义 UI |
+| 导出            | 说明                                                                 |
+| --------------- | -------------------------------------------------------------------- |
+| `default`       | 右上角带切换按钮的图表（等同于 `MermaidToggle`）                     |
+| `Mermaid`       | 只渲染图表，图表就绪前显示加载骨架                                   |
+| `MermaidSource` | 只渲染 Mermaid 源码                                                  |
+| `MermaidToggle` | 等同于默认导出                                                       |
+| `useMermaid`    | 渲染 Mermaid 源码并返回 `{ svg, error, loading }`，用于组合自定义 UI |
 
 `Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig` 和可选的 `onRender(svg)`。其中 `svg` 是经过 XML 序列化、可独立使用的 SVG 字符串。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
 

@@ -10,4 +10,6 @@ export type MermaidProps = {
 export type MermaidResult = {
   svg?: string;
   error?: string;
+  /** 是否仍在渲染 */
+  loading?: boolean;
 };

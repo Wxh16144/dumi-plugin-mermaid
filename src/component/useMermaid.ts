@@ -2,14 +2,14 @@ import * as React from 'react';
 import type { MermaidProps, MermaidResult } from './types';
 import useColorScheme from './useColorScheme';
 
-/** 渲染 mermaid 图表，返回 svg 或错误信息 */
+/** 渲染 mermaid 图表，返回 svg、错误信息或加载状态 */
 export default function useMermaid(
   code: string,
   mermaidConfig?: MermaidProps['mermaidConfig'],
 ): MermaidResult {
   const scheme = useColorScheme();
   const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
-  const [result, setResult] = React.useState<MermaidResult>({});
+  const [result, setResult] = React.useState<MermaidResult>({ loading: true });
 
   // mermaidConfig 可能是内联对象，按值比较避免 effect 反复执行
   const configKey = JSON.stringify(mermaidConfig ?? null);
@@ -28,10 +28,13 @@ export default function useMermaid(
         } as any);
 
         const { svg } = await mermaid.render(`mermaid-${uid}`, code);
-        if (!cancelled) setResult({ svg });
+        if (!cancelled) setResult({ svg, loading: false });
       } catch (error) {
         if (!cancelled) {
-          setResult({ error: error instanceof Error ? error.message : String(error) });
+          setResult({
+            error: error instanceof Error ? error.message : String(error),
+            loading: false,
+          });
         }
       }
     })();
