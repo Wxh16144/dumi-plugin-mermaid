@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.1.0...v1.2.0) (2026-09-29)
+
+### Features
+
+- show dumi loading skeleton while rendering mermaid diagram ([f7aaa0c](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/f7aaa0c94dd95bf548744a1a461dce6b1ed9063d))
+- syntax highlight mermaid source code ([f2af6bd](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/f2af6bd30faade51433d8f047d5d645ccf68dd86))
+
 # [1.1.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.0.0...v1.1.0) (2026-09-28)
 
 ### Features
