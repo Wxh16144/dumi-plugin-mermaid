@@ -34,3 +34,6 @@ lambda/mock/index.js
 # umi
 **/.dumi/tmp*
 .doc
+
+CLAUDE.md
+AGENTS.md

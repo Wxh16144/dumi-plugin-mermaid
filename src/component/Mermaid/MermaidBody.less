@@ -1,0 +1,24 @@
+// 图表本体的基础样式。
+//
+// 刻意和 `MermaidBody.tsx` 放在一起：`MermaidBody` 是真正渲染 `.dumi-plugin-mermaid`
+// 的组件，`Mermaid` 与 `MermaidViewer/Stage` 都会经过它，因此这份样式不可能被
+// tree-shaking 掉。反例：曾经放在 `Mermaid/index.less`，而 `MermaidToggle` 改成渲染
+// `MermaidViewer` 之后 `Mermaid/index.tsx` 不再被引用，整份样式（含居中与 padding）
+// 就从产物里消失了 —— 图表会退回 `display: inline` 并靠左。
+//
+// 外层用 :where() 归零特异性，方便主题整体覆盖
+:where(.dumi-plugin-mermaid) {
+  display: flex;
+  padding: 16px;
+  min-height: 240px;
+  height: fit-content;
+
+  // 图表默认居中：mermaid 会给 svg 写 width="100%" + max-width={自然宽度}，
+  // 配合 block + auto 外边距即可在容器内水平居中
+  svg {
+    display: block;
+    margin: 0 auto;
+    transform-origin: 50%;
+    transition: .1s ease-in-out;
+  }
+}

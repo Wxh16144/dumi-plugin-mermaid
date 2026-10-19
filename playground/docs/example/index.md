@@ -1,5 +1,6 @@
 ---
 title: Examples
+order: 2
 ---
 
 下面每个 demo 的源码都取自 [source.md](./source.md) 中的同名 region：

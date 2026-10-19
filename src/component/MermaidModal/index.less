@@ -1,0 +1,110 @@
+// 外层用 :where() 归零特异性，方便主题整体覆盖；内层保留特异性，避免被站内全局样式带跑
+:where(.dumi-plugin-mermaid-modal) {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vh 4vw;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  animation: dumi-plugin-mermaid-modal-mask-in 160ms ease-out;
+
+  // 面板用主题化的实底，避免在深色站点上出现刺眼的白板
+  &[data-color-scheme='light'] {
+    --mermaid-panel-bg: #ffffff;
+    --mermaid-panel-border: rgba(0, 0, 0, 0.08);
+    --mermaid-panel-fg: #1f2328;
+  }
+
+  &[data-color-scheme='dark'] {
+    --mermaid-panel-bg: #16191d;
+    --mermaid-panel-border: rgba(255, 255, 255, 0.12);
+    --mermaid-panel-fg: #e6edf3;
+  }
+
+  .dumi-plugin-mermaid-modal-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(1180px, 92vw);
+    height: min(840px, 88vh);
+    overflow: hidden;
+    // 面板会被程序化聚焦，但不该出现焦点环
+    outline: none;
+    border: 1px solid var(--mermaid-panel-border);
+    border-radius: 12px;
+    background-color: var(--mermaid-panel-bg);
+    color: var(--mermaid-panel-fg);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.32);
+    animation: dumi-plugin-mermaid-modal-panel-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .dumi-plugin-mermaid-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background-color: transparent;
+    color: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+    transition: background-color 140ms ease, opacity 140ms ease;
+
+    svg {
+      display: block;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      opacity: 1;
+      background-color: rgba(128, 128, 128, 0.16);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #1677ff;
+      outline-offset: 1px;
+    }
+  }
+}
+
+@keyframes dumi-plugin-mermaid-modal-mask-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dumi-plugin-mermaid-modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.dumi-plugin-mermaid-modal) {
+    animation: none;
+
+    .dumi-plugin-mermaid-modal-panel {
+      animation: none;
+    }
+  }
+}

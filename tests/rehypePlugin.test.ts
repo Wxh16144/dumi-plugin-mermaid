@@ -56,6 +56,25 @@ describe('rehypePlugin', () => {
     });
   });
 
+  it('should forward locales overrides as a JSX attribute', () => {
+    const locales = { 'en-US': { 'mermaid.actions.expand': 'Fullscreen' } };
+    const tree = run([markerPre('graph TD;')], { locales });
+
+    expect(tree.children[0].JSXAttributes).toHaveLength(2);
+    expect(tree.children[0].JSXAttributes[1]).toEqual({
+      type: 'JSXAttribute',
+      name: 'locales',
+      value: JSON.stringify(locales),
+    });
+  });
+
+  it('should omit both optional attributes when no options are given', () => {
+    const tree = run([markerPre('graph TD;')]);
+
+    expect(tree.children[0].JSXAttributes).toHaveLength(1);
+    expect(tree.children[0].JSXAttributes[0].name).toBe('code');
+  });
+
   it('should keep other elements untouched', () => {
     const pre = { type: 'element', tagName: 'pre', properties: {}, children: [] };
     const tree = run([pre]);

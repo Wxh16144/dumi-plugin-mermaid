@@ -14,6 +14,10 @@ export default defineConfig({
       github: homepage,
     },
   },
+  locales: [
+    { id: 'zh-CN', name: '🇨🇳 简体中文' },
+    { id: 'en-US', name: '🇺🇸 English' },
+  ],
   outputPath: resolve(__dirname, '../.doc'),
   base: isProdSite ? `/${name}/` : '/',
   publicPath: isProdSite ? `/${name}/` : '/',

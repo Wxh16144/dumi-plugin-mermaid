@@ -1,0 +1,221 @@
+// 外层用 :where() 归零特异性，方便主题整体覆盖；内层保留特异性，避免被站内全局样式带跑
+:where(.dumi-plugin-mermaid-viewer) {
+  // 中性半透明灰阶：明暗主题下都成立，叠在图表上也不挡内容
+  --mermaid-line: rgba(128, 128, 128, 0.28);
+  --mermaid-surface: rgba(128, 128, 128, 0.08);
+  --mermaid-surface-hover: rgba(128, 128, 128, 0.18);
+  --mermaid-surface-active: rgba(128, 128, 128, 0.28);
+  --mermaid-control-size: 28px;
+  --mermaid-radius: 6px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  // 图表视口：超出部分裁掉，缩放后不撑破文档流
+  .dumi-plugin-mermaid-viewer-viewport {
+    position: relative;
+    overflow: hidden;
+
+    &[data-draggable] {
+      cursor: grab;
+    }
+
+    &[data-dragging] {
+      cursor: grabbing;
+      user-select: none;
+    }
+  }
+
+  // 以容器中心为不动点：按钮缩放即为「围绕中心缩放」
+  .dumi-plugin-mermaid-viewer-stage {
+    transform-origin: center center;
+    will-change: transform;
+    transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  // 拖拽要跟手，关掉过渡
+  .dumi-plugin-mermaid-viewer-viewport[data-dragging] .dumi-plugin-mermaid-viewer-stage {
+    transition: none;
+  }
+
+  .dumi-plugin-mermaid-viewer-toolbar,
+  .dumi-plugin-mermaid-viewer-panzoom {
+    position: absolute;
+    z-index: 2;
+  }
+
+  .dumi-plugin-mermaid-viewer-toolbar {
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+  }
+
+  // 右下控件按 mermaid.live 的 3×3 布局：中间一列上下移动，右侧一列缩放
+  .dumi-plugin-mermaid-viewer-panzoom {
+    right: 8px;
+    bottom: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, var(--mermaid-control-size));
+    grid-auto-rows: var(--mermaid-control-size);
+    gap: 2px;
+  }
+
+  .dumi-plugin-mermaid-viewer-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--mermaid-control-size);
+    height: var(--mermaid-control-size);
+    padding: 0;
+    border: 1px solid var(--mermaid-line);
+    border-radius: var(--mermaid-radius);
+    background-color: var(--mermaid-surface);
+    // 叠在图表之上，颜色跟随宿主文档
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background-color 140ms ease, opacity 140ms ease, border-color 140ms ease;
+
+    svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: var(--mermaid-surface-hover);
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--mermaid-surface-active);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #1677ff;
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    &[data-slot='up'] {
+      grid-area: 1 / 2;
+    }
+
+    &[data-slot='zoom-in'] {
+      grid-area: 1 / 3;
+    }
+
+    &[data-slot='left'] {
+      grid-area: 2 / 1;
+    }
+
+    &[data-slot='reset'] {
+      grid-area: 2 / 2;
+    }
+
+    &[data-slot='right'] {
+      grid-area: 2 / 3;
+    }
+
+    &[data-slot='down'] {
+      grid-area: 3 / 2;
+    }
+
+    &[data-slot='zoom-out'] {
+      grid-area: 3 / 3;
+    }
+  }
+
+  // 平移箭头只留图标、缩放与复位保留描边 —— 形成「导航 / 缩放」两级层级
+  .dumi-plugin-mermaid-viewer-panzoom .dumi-plugin-mermaid-viewer-icon-button[data-variant='plain'] {
+    border-color: transparent;
+    background-color: transparent;
+    opacity: 0.55;
+
+    &:hover:not(:disabled) {
+      opacity: 1;
+      background-color: var(--mermaid-surface-hover);
+    }
+  }
+
+  // 复制结果提示，挂在工具组下方
+  .dumi-plugin-mermaid-viewer-feedback {
+    position: absolute;
+    top: calc(var(--mermaid-control-size) + 10px);
+    right: 0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background-color: #24292f;
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    white-space: nowrap;
+    animation: dumi-plugin-mermaid-feedback-in 160ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+}
+
+// 弹窗体：占满面板，让图表按面板宽度铺开
+:where(.dumi-plugin-mermaid-viewer-modal) {
+  flex: 1;
+  min-height: 0;
+
+  .dumi-plugin-mermaid-viewer-viewport {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .dumi-plugin-mermaid-viewer-stage {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  // 给图表留出边距，避免贴住面板边缘与关闭按钮
+  .dumi-plugin-mermaid-viewer-stage > .dumi-plugin-mermaid {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+
+    // max-width 已从行内样式摘掉（见 stripMaxWidth），这里再兜一层
+    svg {
+      width: 100%;
+      max-width: none;
+      max-height: 100%;
+    }
+  }
+}
+
+@keyframes dumi-plugin-mermaid-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.dumi-plugin-mermaid-viewer) {
+    .dumi-plugin-mermaid-viewer-stage {
+      transition: none;
+    }
+
+    .dumi-plugin-mermaid-viewer-feedback {
+      animation: none;
+    }
+  }
+}

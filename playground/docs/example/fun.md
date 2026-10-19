@@ -1,5 +1,6 @@
 ---
 title: 程序员的日常
+order: 3
 ---
 
 用 Mermaid 记录程序员的日常。每种图都是 `mermaid` 代码块，直接复制到支持 Mermaid 的编辑器里就能渲染。

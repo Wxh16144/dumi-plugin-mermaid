@@ -1,10 +1,12 @@
 ---
 title: 渲染 Mermaid 图表
+hero:
+  title: dumi plugin mermaid
 ---
 
-<br>
+## 渲染 Mermaid 图表
 
-## 渲染 Mermaid 图表 <sub>借鉴 [rehype-mermaid](https://github.com/remcohaszing/rehype-mermaid)，并为 dumi 做了适配</sub>
+### 借鉴 [rehype-mermaid](https://github.com/remcohaszing/rehype-mermaid)，并为 dumi 做了适配
 
 <br>
 
@@ -39,5 +41,7 @@ graph TD;
 | 代码块   | 使用 `mermaid` 语言标记                                             |
 | 主题     | 跟随 dumi 明暗配色（`data-prefers-color` / `prefers-color-scheme`） |
 | 初始化项 | 通过插件配置传入 `mermaidConfig`                                    |
+| 控件     | 图区右上放大 / 复制，右下平移缩放（`Ctrl`/`Cmd` + 滚轮、拖拽）      |
+| 多语言   | 控件文案跟随 dumi 当前语言，内置 `zh-CN` / `en-US` 并支持覆盖       |
 
 更多的用法与限制参见 [Usage](/usage)。
