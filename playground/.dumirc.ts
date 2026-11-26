@@ -10,6 +10,12 @@ export default defineConfig({
   plugins: [resolve(__dirname, './mermaid-plugin.ts'), 'dumi-plugin-code-snippets'],
   themeConfig: {
     name: 'Mermaid',
+    // 显式声明顺序，避免按文件名字母序排站点导航
+    nav: [
+      { title: 'Usage', link: '/usage' },
+      { title: 'Examples', link: '/example' },
+      { title: 'Advanced', link: '/advanced' },
+    ],
     socialLinks: {
       github: homepage,
     },

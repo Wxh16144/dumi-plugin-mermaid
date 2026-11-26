@@ -58,12 +58,32 @@ export default {
 
 `mermaidConfig` 会作为 `mermaid.initialize` 的参数，必须是可序列化的 JSON。
 
-`defaultView` 指定图表面板默认展示的视图（`'preview'` | `'code'`，默认 `preview`）。设为 `'code'` 时首屏只渲染源码，点 Preview 才会加载并渲染 mermaid：
+`defaultView` 指定默认视图（`'preview'` | `'code'`）。`'code'` 时首屏只渲染源码，点预览才加载 mermaid：
 
 ```ts
 // .dumi/mermaid-plugin.ts
 export default defineMermaidPlugin({ defaultView: 'code' });
 ```
+
+### Interactive Controls (optional)
+
+放大 / 复制 / 平移缩放位于 `dumi-plugin-mermaid/viewer`，不引入就不进产物。全站开启：
+
+```ts
+// .dumi/mermaid-plugin.ts
+export default defineMermaidPlugin({ component: 'dumi-plugin-mermaid/viewer' });
+```
+
+Markdown 仍只写 `mermaid` 代码块。局部使用：
+
+```tsx
+import { MermaidViewer } from 'dumi-plugin-mermaid/viewer';
+
+<MermaidViewer code={'graph TD; A[Start] --> B[End];'} />;
+```
+
+`toolbar` / `panZoom` 可单独关闭；文案跟随 dumi 当前语言，可用主题 `locales` 覆盖。
+`component` 也支持自定组件路径。详见 [Advanced](https://wxh16144.github.io/dumi-plugin-mermaid/advanced)。
 
 ### Bundle Size
 
