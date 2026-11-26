@@ -1,6 +1,19 @@
-import { describe, expect, it } from 'vitest';
-import rehypePlugin, { MERMAID_COMPONENT_NAME } from '../src/core/rehypePlugin';
-import { MERMAID_MARKER_ATTR, MERMAID_MARKER_PROP } from '../src/core/remarkPlugin';
+import { beforeAll, describe, expect, it } from 'vitest';
+import type * as RehypeModule from '../src/core/rehypePlugin';
+import type * as RemarkModule from '../src/core/remarkPlugin';
+import waitForDumiVisitor from './dumi-ready';
+
+// 必须在 dumi 的访问器就绪后再导入，模块内部的具名导入才能拿到函数
+let rehypePlugin: typeof RehypeModule.default;
+let MERMAID_COMPONENT_NAME: typeof RehypeModule.MERMAID_COMPONENT_NAME;
+let MERMAID_MARKER_ATTR: typeof RemarkModule.MERMAID_MARKER_ATTR;
+let MERMAID_MARKER_PROP: typeof RemarkModule.MERMAID_MARKER_PROP;
+
+beforeAll(async () => {
+  await waitForDumiVisitor();
+  ({ default: rehypePlugin, MERMAID_COMPONENT_NAME } = await import('../src/core/rehypePlugin'));
+  ({ MERMAID_MARKER_ATTR, MERMAID_MARKER_PROP } = await import('../src/core/remarkPlugin'));
+});
 
 const markerPre = (code: string, prop = MERMAID_MARKER_PROP) => ({
   type: 'element',

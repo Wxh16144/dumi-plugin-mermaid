@@ -1,10 +1,24 @@
-import { describe, expect, it } from 'vitest';
-import remarkPlugin, {
-  MERMAID_LANG,
-  MERMAID_MARKER_ATTR,
-  MERMAID_MARKER_PROP,
-  hasMermaidMarker,
-} from '../src/core/remarkPlugin';
+import { beforeAll, describe, expect, it } from 'vitest';
+import type * as RemarkModule from '../src/core/remarkPlugin';
+import waitForDumiVisitor from './dumi-ready';
+
+// 必须在 dumi 的访问器就绪后再导入，模块内部的具名导入才能拿到函数
+let remarkPlugin: typeof RemarkModule.default;
+let MERMAID_LANG: typeof RemarkModule.MERMAID_LANG;
+let MERMAID_MARKER_ATTR: typeof RemarkModule.MERMAID_MARKER_ATTR;
+let MERMAID_MARKER_PROP: typeof RemarkModule.MERMAID_MARKER_PROP;
+let hasMermaidMarker: typeof RemarkModule.hasMermaidMarker;
+
+beforeAll(async () => {
+  await waitForDumiVisitor();
+  ({
+    default: remarkPlugin,
+    MERMAID_LANG,
+    MERMAID_MARKER_ATTR,
+    MERMAID_MARKER_PROP,
+    hasMermaidMarker,
+  } = await import('../src/core/remarkPlugin'));
+});
 
 const run = (children: any[]) => {
   const tree = { type: 'root', children };
