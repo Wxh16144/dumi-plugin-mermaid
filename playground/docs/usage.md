@@ -51,23 +51,70 @@ graph TD;
 
 ## 配置
 
-插件选项会作为 `mermaid.initialize` 的参数，**必须是可序列化的 JSON**。
+dumi 的 `plugins` 只接受字符串，需要传选项时用一个本地插件文件包一层：
 
-```js {6-8} | pure
+```js | pure
+// .dumi/mermaid-plugin.ts
+import { defineMermaidPlugin } from 'dumi-plugin-mermaid';
+
+export default defineMermaidPlugin({
+  mermaidConfig: { securityLevel: 'loose' },
+});
+```
+
+```js {3} | pure
 // .dumirc.ts
 export default {
-  plugins: [
-    [
-      'dumi-plugin-mermaid',
-      {
-        mermaidConfig: { securityLevel: 'loose' },
-      },
-    ],
-  ],
+  plugins: ['./.dumi/mermaid-plugin.ts'],
 };
 ```
 
-### 自定义
+`mermaidConfig` 会作为 `mermaid.initialize` 的参数，**必须是可序列化的 JSON**。
+
+`defaultView` 指定图表面板默认展示的视图，可选 `'preview'`（默认）或 `'code'`：
+
+```js | pure
+// .dumi/mermaid-plugin.ts
+export default defineMermaidPlugin({ defaultView: 'code' });
+```
+
+设为 `'code'` 时首屏只渲染源码，点 Preview 才会加载并渲染 mermaid——适合图表多、
+但读者大多只想复制源码的文档站。
+
+## 体积
+
+mermaid 是懒加载的，并且在图表滚动到视口附近（提前一屏）时才开始加载与渲染：
+
+- 页面里没有图表 → 不下载任何 mermaid 代码；
+- 图表在首屏外 → 滚动到附近才下载，且多个图表按视口顺序依次渲染，避免长任务。
+
+如果连站点产物里的 mermaid 也不想保留，可以让浏览器直接从 CDN 加载：
+
+```js | pure
+// .dumi/mermaid-plugin.ts
+import { defineMermaidPlugin } from 'dumi-plugin-mermaid';
+
+export default defineMermaidPlugin({
+  runtimeURL: 'https://unpkg.com/mermaid@11/dist/mermaid.esm.min.mjs',
+});
+```
+
+`runtimeURL` 必须指向 mermaid 的 **ESM 入口**（`dist/mermaid.esm.min.mjs`），它会继续按图类型拆分并按需请求；指向 UMD 产物（如 `mermaid.min.js`）会导致图表加载失败。
+
+几个可直接使用的地址：
+
+| 源        | 地址                                                                       |
+| --------- | -------------------------------------------------------------------------- |
+| unpkg     | `https://unpkg.com/mermaid@11/dist/mermaid.esm.min.mjs`                    |
+| jsDelivr  | `https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs`         |
+| npmmirror | `https://registry.npmmirror.com/mermaid/11/files/dist/mermaid.esm.min.mjs` |
+
+:::warning
+CDN 模式会引入外网依赖，内网、离线环境请勿开启；版本由地址里的 `@11` 决定，
+不会与插件依赖中的 mermaid 版本联动。
+:::
+
+## 自定义
 
 <i>Source Code: [src/component](https://github.com/Wxh16144/dumi-plugin-mermaid/tree/master/src/component)</i>
 
@@ -92,7 +139,7 @@ export default (props) => {
 | `MermaidToggle` | 等同于默认导出                                                       |
 | `useMermaid`    | 渲染 Mermaid 源码并返回 `{ svg, error, loading }`，用于组合自定义 UI |
 
-`Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig` 和可选的 `onRender(svg)`。其中 `svg` 是经过 XML 序列化、可独立使用的 SVG 字符串。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
+`Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig`、`runtimeURL`、`eager` 和可选的 `onRender(svg)`。其中 `svg` 是经过 XML 序列化、可独立使用的 SVG 字符串。`MermaidToggle` 还接受 `defaultView`，可逐实例覆盖插件选项。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
 
 ```tsx | pure
 import { MermaidToggle } from 'dumi-plugin-mermaid/component';
@@ -107,6 +154,8 @@ export default () => (
 );
 ```
 
+`eager` 会跳过「进入视口才加载」的优化，挂载即渲染；打印、首屏外必须立即出图的场景可以打开它。
+
 默认导出的组件会渲染图表，点击右上角按钮即可查看源码。想只渲染图表、不带切换按钮时：
 
 ```js | pure
@@ -119,3 +168,5 @@ export { Mermaid as default } from 'dumi-plugin-mermaid/component';
 仅支持运行时渲染，因此 `rehype-mermaid` 的以下选项不可用：`strategy`（`img-png` / `img-svg` / `inline-svg`）、
 `dark`、`colorScheme`、`errorFallback`、`screenshot`、`browser`、`launchOptions`。写在 `::: code-group` 里的图表
 会就地渲染，可能与 tab 布局不符。
+
+图表按视口懒渲染，浏览器打印（含导出 PDF）时未滚动到的图表仍是骨架；需要整页打印可以在对应页面使用 `eager`。

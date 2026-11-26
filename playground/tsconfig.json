@@ -8,5 +8,5 @@
       "@@/*": [".dumi/tmp/*"]
     }
   },
-  "include": [".dumirc.ts"]
+  "include": [".dumirc.ts", "mermaid-plugin.ts"]
 }
