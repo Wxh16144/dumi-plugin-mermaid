@@ -56,6 +56,29 @@ describe('rehypePlugin', () => {
     });
   });
 
+  it('should forward runtimeURL as a JSX attribute', () => {
+    const runtimeURL = 'https://cdn.example.com/mermaid.esm.min.mjs';
+    const tree = run([markerPre('graph TD;')], { runtimeURL });
+
+    expect(tree.children[0].JSXAttributes).toHaveLength(2);
+    expect(tree.children[0].JSXAttributes[1]).toEqual({
+      type: 'JSXAttribute',
+      name: 'runtimeURL',
+      value: JSON.stringify(runtimeURL),
+    });
+  });
+
+  it('should forward defaultView as a JSX attribute', () => {
+    const tree = run([markerPre('graph TD;')], { defaultView: 'code' });
+
+    expect(tree.children[0].JSXAttributes).toHaveLength(2);
+    expect(tree.children[0].JSXAttributes[1]).toEqual({
+      type: 'JSXAttribute',
+      name: 'defaultView',
+      value: JSON.stringify('code'),
+    });
+  });
+
   it('should keep other elements untouched', () => {
     const pre = { type: 'element', tagName: 'pre', properties: {}, children: [] };
     const tree = run([pre]);

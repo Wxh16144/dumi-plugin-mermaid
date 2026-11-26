@@ -7,6 +7,10 @@ export const MERMAID_COMPONENT_NAME = 'DumiPluginMermaid';
 export interface RehypePluginOptions {
   /** passed to `mermaid.initialize`, must be JSON serializable */
   mermaidConfig?: Record<string, unknown>;
+  /** 从外部地址（如 CDN）加载 mermaid 的 ESM 入口，配置后 mermaid 不再打包进产物 */
+  runtimeURL?: string;
+  /** 图表面板默认展示的视图；为 `code` 时点 Preview 才会加载并渲染 mermaid */
+  defaultView?: 'preview' | 'code';
 }
 
 /** collect the text of a hast node */
@@ -16,7 +20,7 @@ const toText = (node: any): string => {
 };
 
 function rehypePlugin(options: RehypePluginOptions = {}) {
-  const { mermaidConfig } = options;
+  const { mermaidConfig, runtimeURL, defaultView } = options;
 
   return (tree: any) => {
     unistUtilVisit.visit(tree, 'element', (node: any, index: number | null, parent: any) => {
@@ -35,6 +39,22 @@ function rehypePlugin(options: RehypePluginOptions = {}) {
           type: 'JSXAttribute',
           name: 'mermaidConfig',
           value: JSON.stringify(mermaidConfig),
+        });
+      }
+
+      if (runtimeURL) {
+        JSXAttributes.push({
+          type: 'JSXAttribute',
+          name: 'runtimeURL',
+          value: JSON.stringify(runtimeURL),
+        });
+      }
+
+      if (defaultView) {
+        JSXAttributes.push({
+          type: 'JSXAttribute',
+          name: 'defaultView',
+          value: JSON.stringify(defaultView),
         });
       }
 
