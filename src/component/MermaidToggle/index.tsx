@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Mermaid from '../Mermaid';
 import MermaidSource from '../MermaidSource';
+import { preloadMermaid } from '../renderMermaid';
 import type { MermaidToggleProps, MermaidView } from '../types';
 import './index.less';
 
@@ -11,11 +12,18 @@ const VIEWS: { value: MermaidView; label: string }[] = [
 
 function MermaidToggle(props: MermaidToggleProps) {
   const { code, defaultView = 'preview', ...rest } = props;
+  const { runtimeURL } = rest;
+  const baseId = React.useId().replace(/[^a-zA-Z0-9]/g, '');
   const [view, setView] = React.useState<MermaidView>(defaultView);
   // 预览展示过就保持挂载：切走时只是隐藏，切回来直接复用已渲染的 SVG，不再出现骨架闪烁
   const [previewMounted, setPreviewMounted] = React.useState(defaultView === 'preview');
   // 用户主动点开预览说明图表已在视口内，不必再等 IntersectionObserver
   const [activated, setActivated] = React.useState(false);
+
+  // 悬停 / 聚焦到工具栏就说明大概率要看图，先把 mermaid 下好，点开即出图
+  const preload = React.useCallback(() => {
+    preloadMermaid(runtimeURL);
+  }, [runtimeURL]);
 
   const showView = (next: MermaidView) => {
     setView(next);
@@ -26,19 +34,43 @@ function MermaidToggle(props: MermaidToggleProps) {
     }
   };
 
+  // 标准 tab 交互：左右方向键切换，并把焦点带到新选中的 tab
+  const onTabKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+    event.preventDefault();
+    const index = VIEWS.findIndex((item) => item.value === view);
+    const offset = event.key === 'ArrowRight' ? 1 : VIEWS.length - 1;
+    const next = VIEWS[(index + offset) % VIEWS.length];
+
+    showView(next.value);
+    document.getElementById(`${baseId}-tab-${next.value}`)?.focus();
+  };
+
   const previewVisible = view === 'preview';
 
   return (
     <div className="dumi-plugin-mermaid-toggle">
       <div className="dumi-plugin-mermaid-toggle-toolbar">
-        <div className="dumi-plugin-mermaid-toggle-tabs" role="group" aria-label="View">
+        <div
+          className="dumi-plugin-mermaid-toggle-tabs"
+          role="tablist"
+          aria-label="View"
+          onPointerEnter={preload}
+          onFocus={preload}
+        >
           {VIEWS.map(({ value, label }) => (
             <button
               key={value}
+              id={`${baseId}-tab-${value}`}
               type="button"
+              role="tab"
               className="dumi-plugin-mermaid-toggle-tab"
-              aria-pressed={view === value}
+              aria-selected={view === value}
+              aria-controls={`${baseId}-panel-${value}`}
+              tabIndex={view === value ? 0 : -1}
               onClick={() => showView(value)}
+              onKeyDown={onTabKeyDown}
             >
               {label}
             </button>
@@ -46,11 +78,26 @@ function MermaidToggle(props: MermaidToggleProps) {
         </div>
       </div>
       {previewMounted ? (
-        <div className="dumi-plugin-mermaid-toggle-pane" hidden={!previewVisible}>
+        <div
+          id={`${baseId}-panel-preview`}
+          className="dumi-plugin-mermaid-toggle-pane"
+          role="tabpanel"
+          aria-labelledby={`${baseId}-tab-preview`}
+          hidden={!previewVisible}
+        >
           <Mermaid {...rest} code={code} eager={rest.eager || activated} />
         </div>
       ) : null}
-      {previewVisible ? null : <MermaidSource code={code} />}
+      {previewVisible ? null : (
+        <div
+          id={`${baseId}-panel-code`}
+          className="dumi-plugin-mermaid-toggle-pane"
+          role="tabpanel"
+          aria-labelledby={`${baseId}-tab-code`}
+        >
+          <MermaidSource code={code} />
+        </div>
+      )}
     </div>
   );
 }

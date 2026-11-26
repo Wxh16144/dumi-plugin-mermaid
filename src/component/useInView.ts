@@ -5,15 +5,21 @@ const DEFAULT_ROOT_MARGIN = '200px';
 
 /**
  * 元素进入视口后返回 true。
- * 不支持 IntersectionObserver 时直接返回 true，退化为立即渲染。
+ * 初始恒为 false，保证 SSR 与首次客户端渲染一致；
+ * 不支持 IntersectionObserver 时在 effect 里直接置为 true，退化为立即渲染。
  */
 export default function useInView<T extends Element>(rootMargin = DEFAULT_ROOT_MARGIN) {
   const ref = React.useRef<T>(null);
-  const [inView, setInView] = React.useState(() => typeof IntersectionObserver === 'undefined');
+  const [inView, setInView] = React.useState(false);
 
   React.useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+
     const element = ref.current;
-    if (!element || typeof IntersectionObserver === 'undefined') return;
+    if (!element) return;
 
     const observer = new IntersectionObserver(
       (entries) => {

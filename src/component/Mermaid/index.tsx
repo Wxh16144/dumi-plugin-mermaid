@@ -1,23 +1,31 @@
-import Loading from 'dumi/theme/slots/Loading';
 import * as React from 'react';
 import type { MermaidProps } from '../types';
 import useInView from '../useInView';
 import useMermaid from '../useMermaid';
+import { getRenderedHeight, setRenderedHeight } from './heightCache';
 import './index.less';
+import MermaidSkeleton from './MermaidSkeleton';
 
-function MermaidRenderer(props: MermaidProps) {
-  const { code, mermaidConfig, runtimeURL, onRender } = props;
-  const { svg, error, loading } = useMermaid(code, mermaidConfig, runtimeURL);
+type MermaidRendererProps = MermaidProps & {
+  minHeight?: number;
+};
+
+function MermaidRenderer(props: MermaidRendererProps) {
+  const { code, mermaidConfig, runtimeURL, onRender, minHeight } = props;
+  const { svg, error, loading, retry } = useMermaid(code, mermaidConfig, runtimeURL);
   const rootRef = React.useRef<HTMLDivElement>(null);
   const onRenderRef = React.useRef(onRender);
   onRenderRef.current = onRender;
 
   React.useEffect(() => {
-    const svgElement = rootRef.current?.querySelector('svg');
-    if (svgElement) {
-      onRenderRef.current?.(new XMLSerializer().serializeToString(svgElement));
-    }
-  }, [svg]);
+    const element = rootRef.current;
+    const svgElement = element?.querySelector('svg');
+    if (!element || !svgElement) return;
+
+    onRenderRef.current?.(new XMLSerializer().serializeToString(svgElement));
+    // 记住高度，同一份源码下次渲染前先用骨架占住同样的位置
+    setRenderedHeight(code, element.getBoundingClientRect().height);
+  }, [svg, code]);
 
   if (svg) {
     return (
@@ -29,13 +37,8 @@ function MermaidRenderer(props: MermaidProps) {
     );
   }
 
-  // 服务端与首屏保持一致，渲染完成前用 dumi 的骨架占位
   if (loading) {
-    return (
-      <div className="dumi-plugin-mermaid" aria-busy>
-        <Loading />
-      </div>
-    );
+    return <MermaidSkeleton minHeight={minHeight} />;
   }
 
   // 渲染失败时退回源码，方便排查
@@ -44,25 +47,36 @@ function MermaidRenderer(props: MermaidProps) {
       <pre>
         <code className="language-mermaid">{code}</code>
       </pre>
-      {error ? <p role="alert">{error}</p> : null}
+      {error ? (
+        <div className="dumi-plugin-mermaid-error" role="alert">
+          <span>{error}</span>
+          {retry ? (
+            <button className="dumi-plugin-mermaid-retry" type="button" onClick={retry}>
+              重试
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function Mermaid(props: MermaidProps) {
-  const { eager } = props;
+  const { code, eager } = props;
   const [rootRef, inView] = useInView<HTMLDivElement>();
+  // effect 里取值，保证 SSR 与首次客户端渲染都用空高度
+  const [minHeight, setMinHeight] = React.useState<number>();
 
-  // 服务端与未进入视口时都只渲染骨架，避免 hydration 不一致，也让 mermaid 不被提前加载
+  React.useEffect(() => {
+    setMinHeight(getRenderedHeight(code));
+  }, [code]);
+
+  // 未进入视口时只渲染骨架，mermaid 不会被提前加载
   if (!eager && !inView) {
-    return (
-      <div ref={rootRef} className="dumi-plugin-mermaid" aria-busy>
-        <Loading />
-      </div>
-    );
+    return <MermaidSkeleton ref={rootRef} minHeight={minHeight} />;
   }
 
-  return <MermaidRenderer {...props} />;
+  return <MermaidRenderer {...props} minHeight={minHeight} />;
 }
 
 export default React.memo(Mermaid);
