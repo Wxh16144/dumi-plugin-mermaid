@@ -62,7 +62,7 @@ export default defineMermaidPlugin({
 });
 ```
 
-```js {3} | pure
+```js {5} | pure
 // .dumirc.ts
 import { resolve } from 'path';
 
@@ -106,6 +106,10 @@ export default defineMermaidPlugin({
 
 `runtimeURL` 必须指向 mermaid 的 **ESM 入口**（`dist/mermaid.esm.min.mjs`），它会继续按图类型拆分并按需请求；指向 UMD 产物（如 `mermaid.min.js`）会导致图表加载失败。
 
+地址在构建期注入一次，不会重复写进每个图表的 props；CDN 模式下手工引入 `dumi-plugin-mermaid/component`
+也能正常加载。除绝对地址外，还支持协议相对地址（`//cdn.example.com/...`）和站内路径
+（如 `/mermaid.esm.min.mjs`，把文件放进 `public/` 即可自托管）。
+
 几个可直接使用的地址：
 
 | 源        | 地址                                                                       |
@@ -115,9 +119,16 @@ export default defineMermaidPlugin({
 | npmmirror | `https://registry.npmmirror.com/mermaid/11/files/dist/mermaid.esm.min.mjs` |
 
 :::warning
-CDN 模式会引入外网依赖，内网、离线环境请勿开启；版本由地址里的 `@11` 决定，
-不会与插件依赖中的 mermaid 版本联动。
+CDN 模式会引入外网依赖，内网、离线环境请勿开启；`http://` 地址在 https 站点会被浏览器拦截（构建时会给出警告）。
+版本由地址里的 `@11` 决定，不会与插件依赖中的 mermaid 版本联动。
 :::
+
+### 渲染细节
+
+- **预加载**：`defaultView: 'code'` 时，鼠标悬停或聚焦到切换按钮会先下载 mermaid（不渲染），点开 Preview 即出图。
+- **失败重试**：模块加载失败会自动重试一次；仍失败时图表位置展示源码与错误信息，并提供「重试」按钮。
+- **占位高度**：同一份源码再次渲染时，骨架会先占住上次的高度，避免图表出现时页面跳动。
+- **无障碍**：切换按钮使用 `role="tablist"` / `role="tab"` 语义，支持左右方向键切换。
 
 ## 自定义
 
@@ -136,15 +147,15 @@ export default (props) => {
 
 `dumi-plugin-mermaid/component` 导出以下组件和 Hook：
 
-| 导出            | 说明                                                                 |
-| --------------- | -------------------------------------------------------------------- |
-| `default`       | 右上角带切换按钮的图表（等同于 `MermaidToggle`）                     |
-| `Mermaid`       | 只渲染图表，图表就绪前显示加载骨架                                   |
-| `MermaidSource` | 只渲染 Mermaid 源码                                                  |
-| `MermaidToggle` | 等同于默认导出                                                       |
-| `useMermaid`    | 渲染 Mermaid 源码并返回 `{ svg, error, loading }`，用于组合自定义 UI |
+| 导出            | 说明                                                                        |
+| --------------- | --------------------------------------------------------------------------- |
+| `default`       | 右上角带切换按钮的图表（等同于 `MermaidToggle`）                            |
+| `Mermaid`       | 只渲染图表，图表就绪前显示加载骨架                                          |
+| `MermaidSource` | 只渲染 Mermaid 源码                                                         |
+| `MermaidToggle` | 等同于默认导出                                                              |
+| `useMermaid`    | 渲染 Mermaid 源码并返回 `{ svg, error, loading, retry }`，用于组合自定义 UI |
 
-`Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig`、`runtimeURL`、`eager` 和可选的 `onRender(svg)`。其中 `svg` 是经过 XML 序列化、可独立使用的 SVG 字符串。`MermaidToggle` 还接受 `defaultView`，可逐实例覆盖插件选项。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
+`Mermaid` 与 `MermaidToggle` 接受 `code`、`mermaidConfig`、`eager` 和可选的 `onRender(svg)`。其中 `svg` 是经过 XML 序列化、可独立使用的 SVG 字符串。`MermaidToggle` 还接受 `defaultView`，可逐实例覆盖插件选项；`runtimeURL` 默认由插件注入，只有需要给单个图表换地址时才需要传。需要在图表渲染完成后生成下载链接、图片预览等内容时，可以使用 `onRender`：
 
 ```tsx | pure
 import { MermaidToggle } from 'dumi-plugin-mermaid/component';
