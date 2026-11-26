@@ -69,16 +69,12 @@ describe('rehypePlugin', () => {
     });
   });
 
-  it('should forward runtimeURL as a JSX attribute', () => {
-    const runtimeURL = 'https://cdn.example.com/mermaid.esm.min.mjs';
-    const tree = run([markerPre('graph TD;')], { runtimeURL });
-
-    expect(tree.children[0].JSXAttributes).toHaveLength(2);
-    expect(tree.children[0].JSXAttributes[1]).toEqual({
-      type: 'JSXAttribute',
-      name: 'runtimeURL',
-      value: JSON.stringify(runtimeURL),
+  it('should not repeat runtimeURL on every diagram', () => {
+    const tree = run([markerPre('graph TD;')], {
+      runtimeURL: 'https://cdn.example.com/mermaid.esm.min.mjs',
     });
+
+    expect(tree.children[0].JSXAttributes).toHaveLength(1);
   });
 
   it('should forward defaultView as a JSX attribute', () => {
