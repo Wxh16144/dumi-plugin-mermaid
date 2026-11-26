@@ -155,9 +155,10 @@ describe('defaultView', () => {
     expect(mermaidMock.render).not.toHaveBeenCalled();
 
     await clickTab(el, 'Preview');
-    await act(async () => observers[0].trigger());
     await flush();
 
+    // 主动点开时不再等 IntersectionObserver
+    expect(observers).toHaveLength(0);
     expect(mermaidMock.render).toHaveBeenCalledTimes(1);
     expect(el.querySelector('svg')).not.toBeNull();
   });
@@ -171,5 +172,52 @@ describe('defaultView', () => {
     await flush();
 
     expect(mermaidMock.render).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('切换视图', () => {
+  const clickTab = async (container: HTMLElement, label: string) => {
+    const button = Array.from(container.querySelectorAll('button')).find(
+      (item) => item.textContent === label,
+    )!;
+
+    await act(async () => {
+      button.click();
+    });
+  };
+
+  const getPane = (container: HTMLElement) =>
+    container.querySelector<HTMLElement>('.dumi-plugin-mermaid-toggle-pane');
+
+  it('切回预览时复用已渲染的 SVG，不再重复渲染', async () => {
+    const el = await render(<MermaidToggle code="graph TD;A-->B" />);
+
+    await act(async () => observers[0].trigger());
+    await flush();
+    expect(mermaidMock.render).toHaveBeenCalledTimes(1);
+
+    await clickTab(el, 'Code');
+    expect(el.querySelector('.dumi-default-source-code')).not.toBeNull();
+
+    await clickTab(el, 'Preview');
+    await flush();
+
+    expect(mermaidMock.render).toHaveBeenCalledTimes(1);
+    expect(getPane(el)!.hidden).toBe(false);
+    expect(el.querySelector('svg')).not.toBeNull();
+  });
+
+  it('切到源码时预览面板只是隐藏，不卸载', async () => {
+    const el = await render(<MermaidToggle code="graph TD;A-->B" />);
+
+    await act(async () => observers[0].trigger());
+    await flush();
+
+    await clickTab(el, 'Code');
+
+    const pane = getPane(el);
+    expect(pane).not.toBeNull();
+    expect(pane!.hidden).toBe(true);
+    expect(pane!.querySelector('svg')).not.toBeNull();
   });
 });
