@@ -7,7 +7,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const isProdSite = process.env.PREVIEW !== '1' && isProd;
 
 export default defineConfig({
-  plugins: ['./mermaid-plugin.ts', 'dumi-plugin-code-snippets'],
+  plugins: [resolve(__dirname, './mermaid-plugin.ts'), 'dumi-plugin-code-snippets'],
   themeConfig: {
     name: 'Mermaid',
     socialLinks: {

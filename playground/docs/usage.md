@@ -64,10 +64,15 @@ export default defineMermaidPlugin({
 
 ```js {3} | pure
 // .dumirc.ts
+import { resolve } from 'path';
+
 export default {
-  plugins: ['./.dumi/mermaid-plugin.ts'],
+  plugins: [resolve(__dirname, './.dumi/mermaid-plugin.ts')],
 };
 ```
+
+> `plugins` 里的相对路径以 dumi 的运行目录（项目根）为基准，而不是 `.dumirc.ts` 所在位置。
+> 配置和插件文件不在同一层、或在 monorepo 里从其他目录启动时，用 `resolve(__dirname, ...)` 写成绝对路径更稳妥。
 
 `mermaidConfig` 会作为 `mermaid.initialize` 的参数，**必须是可序列化的 JSON**。
 
