@@ -1,3 +1,19 @@
+# [1.3.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.2.0...v1.3.0) (2026-11-26)
+
+### Bug Fixes
+
+- **playground:** resolve local plugin from \_\_dirname ([29304f4](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/29304f4a7c9a7c27dfd5da0455a9366b35636661))
+
+### Features
+
+- defer mermaid loading and support external runtime url ([5987de8](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/5987de8b4834e502312a2d0a9c5c783afef0c5dc))
+- inject runtimeURL at build time instead of per-diagram props ([888db2f](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/888db2f032e7bdead4330de4e6779d0dcaddda40))
+
+### Performance Improvements
+
+- **component:** add skeleton placeholder, prefetch and tab semantics ([7a0970b](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/7a0970bc08682c26192e401141314117d0b069b8))
+- keep rendered diagram mounted to avoid flicker when switching views ([71ed54e](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/71ed54ee45f3c12f7fac4115f75650d613e97056))
+
 # [1.2.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.1.0...v1.2.0) (2026-09-29)
 
 ### Features
