@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.3.0...v1.4.0) (2026-11-26)
+
+### Features
+
+- **core:** allow swapping the diagram component and localize its labels ([0edb4b4](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/0edb4b44ae1add7d2ef71f95155081697b305daa))
+- **viewer:** add an opt-in subpath for interactive controls ([27fe627](https://github.com/Wxh16144/dumi-plugin-mermaid/commit/27fe6273dd9de14b3e6866cd11dac708caeec0b1))
+
 # [1.3.0](https://github.com/Wxh16144/dumi-plugin-mermaid/compare/v1.2.0...v1.3.0) (2026-11-26)
 
 ### Bug Fixes

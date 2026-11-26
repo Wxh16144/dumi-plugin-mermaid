@@ -1,6 +1,6 @@
 {
   "name": "dumi-plugin-mermaid",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Dumi Plugin - Render mermaid diagrams from code blocks",
   "keywords": [
     "dumi",
