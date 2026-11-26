@@ -1,3 +1,5 @@
+import type * as React from 'react';
+
 /** 图表面板默认展示的视图 */
 export type MermaidView = 'preview' | 'code';
 
@@ -26,6 +28,12 @@ export type MermaidProps = {
 export type MermaidToggleProps = MermaidProps & {
   /** 默认展示的视图，对应插件选项 `defaultView`；仅在首次挂载时生效 */
   defaultView?: MermaidView;
+  /**
+   * 替换预览面板的渲染方式，默认渲染 `<Mermaid>`。
+   * `dumi-plugin-mermaid/viewer` 用它把预览换成带交互控件的视图，
+   * 懒加载、预加载、切换防闪烁等行为仍由 `MermaidToggle` 统管。
+   */
+  renderPreview?: (props: MermaidProps) => React.ReactNode;
 };
 
 export type MermaidResult = {

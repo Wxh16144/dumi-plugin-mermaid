@@ -14,6 +14,12 @@ const state = vi.hoisted(() => ({
   },
 }));
 
+// `dumi` 的 node 侧入口没有客户端 hooks；渲染组件的用例只需要语言上下文
+vi.mock('dumi', async () => {
+  const { testIntl } = await import('./intl');
+  return { useIntl: () => ({ locale: testIntl.locale, messages: testIntl.messages }) };
+});
+
 vi.mock('dumi-plugin-mermaid/mermaid-loader', () => ({
   default: (runtimeURL?: string) => state.loader(runtimeURL),
   defaultRuntimeURL: undefined,

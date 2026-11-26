@@ -4,6 +4,7 @@ import { name } from './package.json';
 
 export default defineConfig({
   test: {
+    setupFiles: ['./tests/setup.ts'],
     alias: {
       // 必须排在 `[name]` 之前：后者会匹配所有子路径，先命中就会解析到不存在的 `src/mermaid-loader`
       [`${name}/mermaid-loader`]: resolve(__dirname, './src/component/loadMermaid.bundled.ts'),
