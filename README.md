@@ -81,8 +81,18 @@ export default defineMermaidPlugin({
 ```
 
 `runtimeURL` 必须指向 mermaid 的 ESM 入口（`dist/mermaid.esm.min.mjs`），它会继续按图类型懒加载。
-CDN 模式会引入外网依赖，内网 / 离线环境请勿开启；版本由地址里的 `@11` 决定。
-单个图表需要立即渲染（如整页打印）时，给组件传 `eager`。
+地址在构建期注入一次，不会写进每个图表的 props。除绝对地址外，也支持 `//cdn.example.com/...` 和站内路径
+（如 `/mermaid.esm.min.mjs`，把文件放进 `public/` 即可自托管）。
+
+CDN 模式会引入外网依赖，内网 / 离线环境请勿开启；`http://` 地址在 https 站点会被浏览器拦截，构建时会给出警告。
+版本由地址里的 `@11` 决定，不会与插件依赖中的 mermaid 版本联动。
+
+几个渲染细节：
+
+- `defaultView: 'code'` 时，鼠标悬停或聚焦到切换按钮会预先下载 mermaid，点开 Preview 即出图；
+- 加载失败会自动重试一次，仍失败时展示源码与错误信息，并提供「重试」按钮；
+- 同一份源码再次渲染时，骨架会先占住上次的高度，避免页面内容跳动；
+- 单个图表需要立即渲染（如整页打印）时，给组件传 `eager`。
 
 ### Full Document
 
