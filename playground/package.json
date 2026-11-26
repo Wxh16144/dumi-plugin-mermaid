@@ -8,7 +8,7 @@
     "start": "npm run dev"
   },
   "devDependencies": {
-    "dumi": "^2",
+    "dumi": "^2.4.57",
     "dumi-plugin-code-snippets": "^1",
     "dumi-plugin-mermaid": "workspace:*",
     "hard-load": "^0.0.6"

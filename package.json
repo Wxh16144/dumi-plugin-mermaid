@@ -89,7 +89,7 @@
     "@umijs/lint": "^4",
     "@vitest/coverage-v8": "latest",
     "commitlint": "^17",
-    "dumi": "^2",
+    "dumi": "^2.4.57",
     "eslint": "^8",
     "father": "^4",
     "husky": "^8",
