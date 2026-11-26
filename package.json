@@ -31,6 +31,11 @@
       "import": "./es/component/index.js",
       "require": "./lib/component/index.js"
     },
+    "./viewer": {
+      "types": "./es/viewer/index.d.ts",
+      "import": "./es/viewer/index.js",
+      "require": "./lib/viewer/index.js"
+    },
     "./mermaid-loader": {
       "types": "./es/component/loadMermaid.bundled.d.ts",
       "import": "./es/component/loadMermaid.bundled.js",
