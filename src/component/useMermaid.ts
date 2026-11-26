@@ -12,6 +12,8 @@ export default function useMermaid(
   const scheme = useColorScheme();
   const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
   const [result, setResult] = React.useState<MermaidResult>({ loading: true });
+  // 手动重试靠递增计数触发 effect
+  const [attempt, setAttempt] = React.useState(0);
 
   // mermaidConfig 可能是内联对象，按值比较避免 effect 反复执行
   const configKey = JSON.stringify(mermaidConfig ?? null);
@@ -44,7 +46,13 @@ export default function useMermaid(
     return () => {
       cancelled = true;
     };
-  }, [code, scheme, uid, configKey, runtimeURL]);
+  }, [code, scheme, uid, configKey, runtimeURL, attempt]);
 
-  return result;
+  // 主题切换等重渲染保留上一份 SVG，避免闪骨架；只有手动重试才回到加载态
+  const retry = React.useCallback(() => {
+    setResult({ loading: true });
+    setAttempt((count) => count + 1);
+  }, []);
+
+  return { ...result, retry };
 }
