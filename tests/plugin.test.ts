@@ -2,13 +2,14 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import plugin, { defineMermaidPlugin } from '../src';
+import plugin, { MERMAID_COMPONENT_NAME, defineMermaidPlugin, resolveComponentPath } from '../src';
 
 type Registration = { key: string; fn: (memo: any) => any };
 
 const createApi = (absTmpPath: string) => {
   const registrations: Registration[] = [];
   const api = {
+    cwd: absTmpPath,
     paths: { absTmpPath },
     logger: { warn: vi.fn() },
     describe: vi.fn(),
@@ -136,5 +137,73 @@ describe('plugin', () => {
     expect(() => plugin({ describe: vi.fn() } as any, { defaultView: 'svg' as any })).toThrow(
       /defaultView 只能是 'preview' 或 'code'/,
     );
+  });
+});
+
+describe('component 选项', () => {
+  const builtinComponent = path.join(__dirname, '../es/component/index.js');
+
+  it('未配置时使用包内置组件', () => {
+    // 未配置时回到包内置入口，站点无需关心默认值
+    expect(resolveComponentPath(undefined, process.cwd())).toBe(builtinComponent);
+  });
+
+  it('相对路径按项目根目录解析', () => {
+    expect(resolveComponentPath('./src/MyViewer', '/project')).toBe('/project/src/MyViewer');
+    expect(resolveComponentPath('../shared/Viewer.tsx', '/project/site')).toBe(
+      '/project/shared/Viewer.tsx',
+    );
+  });
+
+  it('绝对路径原样使用（交给打包器解析扩展名）', () => {
+    expect(resolveComponentPath('/project/src/Viewer.tsx', '/project')).toBe(
+      '/project/src/Viewer.tsx',
+    );
+  });
+
+  it('包名从项目根目录解析成真实文件', () => {
+    // 用测试自己依赖的包验证解析基准是 cwd
+    const resolved = resolveComponentPath('react', __dirname);
+
+    expect(path.isAbsolute(resolved)).toBe(true);
+    expect(resolved).toContain('react');
+  });
+
+  it('空值或无法解析时构建期直接报错', () => {
+    expect(() => resolveComponentPath('', process.cwd())).toThrow(/component 不能是空字符串/);
+    expect(() => resolveComponentPath('   ', process.cwd())).toThrow(/component 不能是空字符串/);
+    expect(() => resolveComponentPath('no-such-viewer-package', process.cwd())).toThrow(
+      /无法解析 component「no-such-viewer-package」/,
+    );
+  });
+
+  it('注入到 dumi builtin 的 source 使用解析后的路径', () => {
+    const cwd = createTmpDir();
+    const { run } = runPlugin((api) => plugin(api, { component: './src/MyViewer' }), cwd);
+    const theme = run('modifyTheme');
+
+    expect(theme.builtins.DumiPluginMermaid.source).toBe(path.join(cwd, 'src/MyViewer'));
+  });
+
+  it('component 不会流进 rehype 的配置', () => {
+    const { run } = runPlugin((api) =>
+      plugin(api, { component: './src/MyViewer', runtimeURL: '/m.mjs' }),
+    );
+
+    expect(run('modifyConfig').extraRehypePlugins[0][1]).toEqual({ runtimeURL: '/m.mjs' });
+  });
+});
+
+describe('builtin 名字', () => {
+  it('保持 DumiPluginMermaid 不变', () => {
+    // 站点可以用 `.dumi/theme/builtins/<name>` 覆盖图表组件，
+    // 改名会让这些站点静默退回默认组件，所以这里锁死
+    expect(MERMAID_COMPONENT_NAME).toBe('DumiPluginMermaid');
+  });
+
+  it('本地主题目录名与 builtin 注册一致', () => {
+    const { run } = runPlugin((api) => plugin(api, {}));
+
+    expect(Object.keys(run('modifyTheme').builtins)).toContain(MERMAID_COMPONENT_NAME);
   });
 });
