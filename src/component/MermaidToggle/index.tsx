@@ -1,19 +1,17 @@
 import * as React from 'react';
 import Mermaid from '../Mermaid';
 import MermaidSource from '../MermaidSource';
-import type { MermaidProps } from '../types';
+import type { MermaidToggleProps, MermaidView } from '../types';
 import './index.less';
-
-type MermaidView = 'preview' | 'code';
 
 const VIEWS: { value: MermaidView; label: string }[] = [
   { value: 'preview', label: 'Preview' },
   { value: 'code', label: 'Code' },
 ];
 
-function MermaidToggle(props: MermaidProps) {
-  const { code } = props;
-  const [view, setView] = React.useState<MermaidView>('preview');
+function MermaidToggle(props: MermaidToggleProps) {
+  const { code, defaultView = 'preview', ...rest } = props;
+  const [view, setView] = React.useState<MermaidView>(defaultView);
 
   return (
     <div className="dumi-plugin-mermaid-toggle">
@@ -32,7 +30,7 @@ function MermaidToggle(props: MermaidProps) {
           ))}
         </div>
       </div>
-      {view === 'preview' ? <Mermaid {...props} /> : <MermaidSource code={code} />}
+      {view === 'preview' ? <Mermaid code={code} {...rest} /> : <MermaidSource code={code} />}
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { name } from './package.json';
 export default defineConfig({
   test: {
     alias: {
+      // 必须排在 `[name]` 之前：后者会匹配所有子路径，先命中就会解析到不存在的 `src/mermaid-loader`
+      [`${name}/mermaid-loader`]: resolve(__dirname, './src/component/loadMermaid.bundled.ts'),
       [name]: resolve(__dirname, './src'),
       [`${name}/(.*)`]: resolve(__dirname, './src/$1'),
       // only exists in dumi's build, point it to a lightweight stand-in for tests

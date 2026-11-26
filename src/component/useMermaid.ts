@@ -1,4 +1,5 @@
 import * as React from 'react';
+import renderMermaid from './renderMermaid';
 import type { MermaidProps, MermaidResult } from './types';
 import useColorScheme from './useColorScheme';
 
@@ -6,6 +7,7 @@ import useColorScheme from './useColorScheme';
 export default function useMermaid(
   code: string,
   mermaidConfig?: MermaidProps['mermaidConfig'],
+  runtimeURL?: MermaidProps['runtimeURL'],
 ): MermaidResult {
   const scheme = useColorScheme();
   const uid = React.useId().replace(/[^a-zA-Z0-9]/g, '');
@@ -17,32 +19,32 @@ export default function useMermaid(
   React.useEffect(() => {
     let cancelled = false;
 
-    (async () => {
-      try {
-        const mermaid = (await import('mermaid')).default;
-
-        mermaid.initialize({
-          startOnLoad: false,
-          ...((JSON.parse(configKey) ?? {}) as Record<string, unknown>),
-          theme: scheme === 'dark' ? 'dark' : 'default',
-        } as any);
-
-        const { svg } = await mermaid.render(`mermaid-${uid}`, code);
+    renderMermaid(
+      code,
+      {
+        ...((JSON.parse(configKey) ?? {}) as Record<string, unknown>),
+        theme: scheme === 'dark' ? 'dark' : 'default',
+      },
+      uid,
+      runtimeURL,
+    ).then(
+      ({ svg }) => {
         if (!cancelled) setResult({ svg, loading: false });
-      } catch (error) {
+      },
+      (error) => {
         if (!cancelled) {
           setResult({
             error: error instanceof Error ? error.message : String(error),
             loading: false,
           });
         }
-      }
-    })();
+      },
+    );
 
     return () => {
       cancelled = true;
     };
-  }, [code, scheme, uid, configKey]);
+  }, [code, scheme, uid, configKey, runtimeURL]);
 
   return result;
 }
